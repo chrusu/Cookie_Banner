@@ -776,7 +776,7 @@
                 <div class="config-card">
                     <h3>
                         Google Analytics
-                        <span class="config-badge on" id="ga-badge">AN</span>
+                        <span class="config-badge off" id="ga-badge">AUS</span>
                     </h3>
                     <div class="config-row">
                         <label for="cfg-ga-enabled">GA aktivieren</label>
@@ -784,7 +784,7 @@
                             <input
                                 type="checkbox"
                                 id="cfg-ga-enabled"
-                                checked
+
                             />
                             <span class="toggle-slider"></span>
                         </label>
@@ -1197,7 +1197,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
 
                 var COOKIE_NAME = "cookie_consent";
                 var COOKIE_DAYS = 365;
-                var GA_IDS = ["G-33KPQVCEM4", "G-LLB72F4BMS"];
+                var GA_IDS = [];
 
                 var COLOR_BG = "rgb(28, 15, 33)";
                 var COLOR_PRIMARY = "rgb(189, 0, 255)";
@@ -1560,8 +1560,8 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     btnSecondaryColor: "#bd00ff",
                     btnSecondaryBorder: "#bd00ff",
                     btnSecondaryRadius: 0,
-                    gaEnabled: true,
-                    gaIds: ["G-33KPQVCEM4", "G-LLB72F4BMS"],
+                    gaEnabled: false,
+                    gaIds: [],
                     bannerText: "Wir verwenden Cookies, um Ihnen die beste Erfahrung zu bieten und unseren Datenverkehr zu analysieren.",
                     linkText: "Mehr erfahren",
                     linkUrl: "/impressum",
