@@ -1246,7 +1246,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                 function setCookie(name, value, days) {
                     var d = new Date();
                     d.setTime(d.getTime() + days * 86400000);
-                    document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + d.toUTCString() + ";path=/;SameSite=Lax;Secure";
+                    document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax; Secure";
                 }
 
                 function fireConsentEvent(consent) {
@@ -1378,6 +1378,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                 }
 
                 function init() {
+                    if (!document.body) { document.addEventListener("DOMContentLoaded", init); return; }
                     injectStyles();
                     var consent = getCookie(COOKIE_NAME);
                     if (consent === "accepted") {
@@ -1785,7 +1786,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     function liveHandleConsent(accepted) {
                         var d = new Date(); d.setTime(d.getTime() + 365 * 86400000);
                         document.cookie = "cookie_consent=" + (accepted ? "accepted" : "declined") +
-                            ";expires=" + d.toUTCString() + ";path=/;SameSite=Lax;Secure";
+                            "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax; Secure";
                         var evt = new CustomEvent("cookieConsentChanged", { detail: { consent: accepted } });
                         document.dispatchEvent(evt);
                         if (typeof updateStatusDisplay === "function") updateStatusDisplay();
@@ -1872,7 +1873,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("    }");
                     L.push("    function setCookie(name, value, days) {");
                     L.push("        var d = new Date(); d.setTime(d.getTime() + days * 86400000);");
-                    L.push('        document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + d.toUTCString() + ";path=/;SameSite=Lax;Secure";');
+                    L.push('        document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax; Secure";');
                     L.push("    }");
                     L.push("    function lightenRgb(rgbStr, amount) {");
                     L.push("        var m = rgbStr.match(/(\\d+)/g); if (!m) return rgbStr;");
@@ -1950,6 +1951,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("    }");
 
                     L.push("    function init() {");
+                    L.push("        if (!document.body) { document.addEventListener('DOMContentLoaded',init); return; }");
                     L.push("        injectStyles(); var consent = getCookie(COOKIE_NAME);");
                     L.push('        if (consent==="accepted") {');
                     if (s.gaEnabled && gaIdArrayStr) L.push("            grantGoogleAnalytics();");
