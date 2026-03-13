@@ -1327,10 +1327,11 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                 function closeBanner(banner) {
                     banner.classList.remove("cb-visible");
                     setTimeout(function () { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
-                    showCookieButton();
+                    showCookieButton(getCookie(COOKIE_NAME));
                 }
 
-                var COOKIE_SVG =
+                /* Cookie-SVGs: accepted = normales Cookie, pending = mit Fragezeichen, declined = durchgestrichen */
+                var COOKIE_SVG_ACCEPTED =
                     '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">' +
                     '<circle cx="32" cy="32" r="29" fill="rgb(189,0,255)" stroke="#8a00b3" stroke-width="2"/>' +
                     '<circle cx="20" cy="22" r="4" fill="#1C0F21"/><circle cx="38" cy="18" r="3" fill="#1C0F21"/>' +
@@ -1338,15 +1339,39 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     '<circle cx="16" cy="40" r="2.5" fill="#1C0F21"/><circle cx="40" cy="48" r="2.5" fill="#1C0F21"/>' +
                     '<circle cx="24" cy="28" r="1.5" fill="#8a00b3"/><circle cx="46" cy="22" r="1.5" fill="#8a00b3"/>' +
                     '<circle cx="34" cy="46" r="1.5" fill="#8a00b3"/></svg>';
+                var COOKIE_SVG_PENDING =
+                    '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="32" cy="32" r="29" fill="rgb(189,0,255)" stroke="#8a00b3" stroke-width="2"/>' +
+                    '<circle cx="20" cy="22" r="4" fill="#1C0F21"/><circle cx="38" cy="18" r="3" fill="#1C0F21"/>' +
+                    '<circle cx="28" cy="38" r="4.5" fill="#1C0F21"/><circle cx="44" cy="34" r="3.5" fill="#1C0F21"/>' +
+                    '<circle cx="16" cy="40" r="2.5" fill="#1C0F21"/><circle cx="40" cy="48" r="2.5" fill="#1C0F21"/>' +
+                    '<circle cx="24" cy="28" r="1.5" fill="#8a00b3"/><circle cx="46" cy="22" r="1.5" fill="#8a00b3"/>' +
+                    '<circle cx="34" cy="46" r="1.5" fill="#8a00b3"/>' +
+                    '<text x="32" y="40" text-anchor="middle" font-size="28" font-weight="bold" font-family="sans-serif" fill="#fff">?</text></svg>';
+                var COOKIE_SVG_DECLINED =
+                    '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="32" cy="32" r="29" fill="rgb(189,0,255)" stroke="#8a00b3" stroke-width="2"/>' +
+                    '<circle cx="20" cy="22" r="4" fill="#1C0F21"/><circle cx="38" cy="18" r="3" fill="#1C0F21"/>' +
+                    '<circle cx="28" cy="38" r="4.5" fill="#1C0F21"/><circle cx="44" cy="34" r="3.5" fill="#1C0F21"/>' +
+                    '<circle cx="16" cy="40" r="2.5" fill="#1C0F21"/><circle cx="40" cy="48" r="2.5" fill="#1C0F21"/>' +
+                    '<circle cx="24" cy="28" r="1.5" fill="#8a00b3"/><circle cx="46" cy="22" r="1.5" fill="#8a00b3"/>' +
+                    '<circle cx="34" cy="46" r="1.5" fill="#8a00b3"/>' +
+                    '<line x1="10" y1="10" x2="54" y2="54" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>';
 
-                function createCookieButton() {
+                function getCookieSvg(state) {
+                    if (state === "accepted") return COOKIE_SVG_ACCEPTED;
+                    if (state === "declined") return COOKIE_SVG_DECLINED;
+                    return COOKIE_SVG_PENDING;
+                }
+
+                function createCookieButton(state) {
                     var existing = document.getElementById("cb-cookie-btn");
-                    if (existing) return existing;
+                    if (existing) { existing.innerHTML = getCookieSvg(state); return existing; }
                     var btn = document.createElement("button");
                     btn.id = "cb-cookie-btn";
                     btn.setAttribute("aria-label", "Cookie-Einstellungen \u00f6ffnen");
                     btn.setAttribute("title", "Cookie-Einstellungen");
-                    btn.innerHTML = COOKIE_SVG;
+                    btn.innerHTML = getCookieSvg(state);
                     document.body.appendChild(btn);
                     btn.addEventListener("click", function () {
                         hideCookieButton();
@@ -1357,8 +1382,8 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     return btn;
                 }
 
-                function showCookieButton() {
-                    var btn = createCookieButton();
+                function showCookieButton(state) {
+                    var btn = createCookieButton(state);
                     requestAnimationFrame(function () { btn.classList.add("cb-visible"); });
                 }
 
@@ -1371,6 +1396,14 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     setCookie(COOKIE_NAME, accepted ? "accepted" : "declined", COOKIE_DAYS);
                     if (GA_IDS.length > 0) { if (accepted) { loadAndGrantGA(); } else { revokeGoogleAnalytics(); } }
                     fireConsentEvent(accepted);
+                    updateCookieButtonIcon();
+                }
+
+                function updateCookieButtonIcon() {
+                    var btn = document.getElementById("cb-cookie-btn");
+                    if (!btn) return;
+                    var consent = getCookie(COOKIE_NAME);
+                    btn.innerHTML = getCookieSvg(consent);
                 }
 
                 function init() {
@@ -1378,9 +1411,9 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     injectStyles();
                     var consent = getCookie(COOKIE_NAME);
                     if (consent === "accepted") {
-                        if (GA_IDS.length > 0) loadAndGrantGA(); fireConsentEvent(true); showCookieButton();
+                        if (GA_IDS.length > 0) loadAndGrantGA(); fireConsentEvent(true); showCookieButton("accepted");
                     } else if (consent === "declined") {
-                        fireConsentEvent(false); showCookieButton();
+                        fireConsentEvent(false); showCookieButton("declined");
                     } else {
                         createBanner();
                     }
@@ -1798,12 +1831,17 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                         cbtn.id = "cb-cookie-btn";
                         cbtn.setAttribute("aria-label", "Cookie-Einstellungen");
                         cbtn.setAttribute("title", "Cookie-Einstellungen");
-                        cbtn.innerHTML = '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                        var liveConsentMatch = document.cookie.match(/(^| )cookie_consent=([^;]+)/);
+                        var liveConsent = liveConsentMatch ? decodeURIComponent(liveConsentMatch[2]) : null;
+                        var baseSvg = '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">' +
                             '<circle cx="32" cy="32" r="29" fill="' + pBg + '" stroke="' + borderColor + '" stroke-width="2"/>' +
                             '<circle cx="20" cy="22" r="4" fill="' + bg + '"/><circle cx="38" cy="18" r="3" fill="' + bg + '"/>' +
                             '<circle cx="28" cy="38" r="4.5" fill="' + bg + '"/><circle cx="44" cy="34" r="3.5" fill="' + bg + '"/>' +
-                            '<circle cx="16" cy="40" r="2.5" fill="' + bg + '"/><circle cx="40" cy="48" r="2.5" fill="' + bg + '"/>' +
-                            '</svg>';
+                            '<circle cx="16" cy="40" r="2.5" fill="' + bg + '"/><circle cx="40" cy="48" r="2.5" fill="' + bg + '"/>';
+                        if (liveConsent === "declined") baseSvg += '<line x1="10" y1="10" x2="54" y2="54" stroke="' + pColor + '" stroke-width="4" stroke-linecap="round"/>';
+                        else if (liveConsent !== "accepted") baseSvg += '<text x="32" y="40" text-anchor="middle" font-size="28" font-weight="bold" font-family="sans-serif" fill="' + pColor + '">?</text>';
+                        baseSvg += '</svg>';
+                        cbtn.innerHTML = baseSvg;
                         document.body.appendChild(cbtn);
                         requestAnimationFrame(function () { cbtn.classList.add("cb-visible"); });
                         cbtn.addEventListener("click", function () {
@@ -1927,15 +1965,19 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push('        document.getElementById("cb-accept").addEventListener("click",function(){handleConsent(true);closeBanner(b)});');
                     L.push('        document.getElementById("cb-decline").addEventListener("click",function(){handleConsent(false);closeBanner(b)});');
                     L.push("    }");
-                    L.push('    function closeBanner(b){b.classList.remove("cb-visible");setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},400);showCookieButton()}');
+                    L.push('    function closeBanner(b){b.classList.remove("cb-visible");setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},400);showCookieButton(getCookie(COOKIE_NAME))}');
 
-                    L.push("    var COOKIE_SVG='<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"'+BTN_P_BG+'\" stroke=\"'+COLOR_BORDER+'\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"22\" r=\"4\" fill=\"'+COLOR_BG+'\"/><circle cx=\"38\" cy=\"18\" r=\"3\" fill=\"'+COLOR_BG+'\"/><circle cx=\"28\" cy=\"38\" r=\"4.5\" fill=\"'+COLOR_BG+'\"/><circle cx=\"44\" cy=\"34\" r=\"3.5\" fill=\"'+COLOR_BG+'\"/></svg>';");
-                    L.push("    function createCookieButton(){");
-                    L.push('        var e=document.getElementById("cb-cookie-btn");if(e)return e;');
-                    L.push('        var b=document.createElement("button");b.id="cb-cookie-btn";b.setAttribute("aria-label","Cookie-Einstellungen");b.innerHTML=COOKIE_SVG;document.body.appendChild(b);');
+                    L.push("    var COOKIE_SVG_ACCEPTED='<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"'+BTN_P_BG+'\" stroke=\"'+COLOR_BORDER+'\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"22\" r=\"4\" fill=\"'+COLOR_BG+'\"/><circle cx=\"38\" cy=\"18\" r=\"3\" fill=\"'+COLOR_BG+'\"/><circle cx=\"28\" cy=\"38\" r=\"4.5\" fill=\"'+COLOR_BG+'\"/><circle cx=\"44\" cy=\"34\" r=\"3.5\" fill=\"'+COLOR_BG+'\"/></svg>';");
+                    L.push("    var COOKIE_SVG_PENDING='<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"'+BTN_P_BG+'\" stroke=\"'+COLOR_BORDER+'\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"22\" r=\"4\" fill=\"'+COLOR_BG+'\"/><circle cx=\"38\" cy=\"18\" r=\"3\" fill=\"'+COLOR_BG+'\"/><circle cx=\"28\" cy=\"38\" r=\"4.5\" fill=\"'+COLOR_BG+'\"/><circle cx=\"44\" cy=\"34\" r=\"3.5\" fill=\"'+COLOR_BG+'\"/><text x=\"32\" y=\"40\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"bold\" font-family=\"sans-serif\" fill=\"'+BTN_P_COLOR+'\">?</text></svg>';");
+                    L.push("    var COOKIE_SVG_DECLINED='<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"'+BTN_P_BG+'\" stroke=\"'+COLOR_BORDER+'\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"22\" r=\"4\" fill=\"'+COLOR_BG+'\"/><circle cx=\"38\" cy=\"18\" r=\"3\" fill=\"'+COLOR_BG+'\"/><circle cx=\"28\" cy=\"38\" r=\"4.5\" fill=\"'+COLOR_BG+'\"/><circle cx=\"44\" cy=\"34\" r=\"3.5\" fill=\"'+COLOR_BG+'\"/><line x1=\"10\" y1=\"10\" x2=\"54\" y2=\"54\" stroke=\"'+BTN_P_COLOR+'\" stroke-width=\"4\" stroke-linecap=\"round\"/></svg>';");
+                    L.push("    function getCookieSvg(s){if(s===\"accepted\")return COOKIE_SVG_ACCEPTED;if(s===\"declined\")return COOKIE_SVG_DECLINED;return COOKIE_SVG_PENDING;}");
+                    L.push("    function createCookieButton(state){");
+                    L.push('        var e=document.getElementById("cb-cookie-btn");if(e){e.innerHTML=getCookieSvg(state);return e}');
+                    L.push('        var b=document.createElement("button");b.id="cb-cookie-btn";b.setAttribute("aria-label","Cookie-Einstellungen");b.innerHTML=getCookieSvg(state);document.body.appendChild(b);');
                     L.push('        b.addEventListener("click",function(){b.classList.remove("cb-visible");var x=document.getElementById("cb-banner");if(x&&x.parentNode)x.parentNode.removeChild(x);createBanner()});return b}');
-                    L.push('    function showCookieButton(){var b=createCookieButton();requestAnimationFrame(function(){b.classList.add("cb-visible")})}');
+                    L.push('    function showCookieButton(state){var b=createCookieButton(state);requestAnimationFrame(function(){b.classList.add("cb-visible")})}');
                     L.push('    function hideCookieButton(){var b=document.getElementById("cb-cookie-btn");if(b)b.classList.remove("cb-visible")}');
+                    L.push('    function updateCookieButtonIcon(){var b=document.getElementById("cb-cookie-btn");if(b)b.innerHTML=getCookieSvg(getCookie(COOKIE_NAME))}');
 
                     L.push("    function handleConsent(accepted) {");
                     L.push('        setCookie(COOKIE_NAME, accepted ? "accepted" : "declined", COOKIE_DAYS);');
@@ -1943,6 +1985,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                         L.push("        if (accepted) loadAndGrantGA(); else revokeGoogleAnalytics();");
                     }
                     L.push("        fireConsentEvent(accepted);");
+                    L.push("        updateCookieButtonIcon();");
                     L.push("    }");
 
                     L.push("    function init() {");
@@ -1950,10 +1993,10 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("        injectStyles(); var consent = getCookie(COOKIE_NAME);");
                     L.push('        if (consent==="accepted") {');
                     if (s.gaEnabled && gaIdArrayStr) L.push("            loadAndGrantGA();");
-                    L.push("            fireConsentEvent(true); showCookieButton();");
+                    L.push('            fireConsentEvent(true); showCookieButton("accepted");');
                     L.push('        } else if (consent==="declined") {');
 
-                    L.push("            fireConsentEvent(false); showCookieButton();");
+                    L.push('            fireConsentEvent(false); showCookieButton("declined");');
                     L.push("        } else { createBanner(); }");
                     L.push("    }");
                     L.push('    if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();');
