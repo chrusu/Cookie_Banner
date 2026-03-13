@@ -1199,17 +1199,17 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                 var COOKIE_DAYS = 365;
                 var GA_IDS = [];
 
-                /* --- Google Analytics mit Consent Mode v2 --- */
-                window.dataLayer = window.dataLayer || [];
-                function gtag() { window.dataLayer.push(arguments); }
-                window.gtag = gtag;
-                gtag("consent", "default", { analytics_storage: "denied", ad_storage: "denied" });
-                if (GA_IDS.length > 0) {
-                    (function () {
-                        var sc = document.createElement("script"); sc.async = true;
-                        sc.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_IDS[0];
-                        document.head.appendChild(sc);
-                    })();
+                /* --- Google Analytics (erst nach Consent) --- */
+                var gaLoaded = false;
+                function loadAndGrantGA() {
+                    if (gaLoaded || GA_IDS.length === 0) return;
+                    gaLoaded = true;
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag() { window.dataLayer.push(arguments); } window.gtag = gtag;
+                    gtag("consent", "default", { analytics_storage: "granted", ad_storage: "denied" });
+                    var sc = document.createElement("script"); sc.async = true;
+                    sc.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_IDS[0];
+                    document.head.appendChild(sc);
                     gtag("js", new Date());
                     for (var gi = 0; gi < GA_IDS.length; gi++) gtag("config", GA_IDS[gi]);
                 }
@@ -1260,12 +1260,8 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     document.dispatchEvent(evt);
                 }
 
-                function grantGoogleAnalytics() {
-                    gtag("consent", "update", { analytics_storage: "granted" });
-                }
-
                 function revokeGoogleAnalytics() {
-                    gtag("consent", "update", { analytics_storage: "denied" });
+                    if (window.gtag) window.gtag("consent", "update", { analytics_storage: "denied" });
                 }
 
                 /* ---------- Styles (einmalig injiziert) ----------------------------- */
@@ -1373,7 +1369,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
 
                 function handleConsent(accepted) {
                     setCookie(COOKIE_NAME, accepted ? "accepted" : "declined", COOKIE_DAYS);
-                    if (GA_IDS.length > 0) { if (accepted) { grantGoogleAnalytics(); } else { revokeGoogleAnalytics(); } }
+                    if (GA_IDS.length > 0) { if (accepted) { loadAndGrantGA(); } else { revokeGoogleAnalytics(); } }
                     fireConsentEvent(accepted);
                 }
 
@@ -1382,9 +1378,9 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     injectStyles();
                     var consent = getCookie(COOKIE_NAME);
                     if (consent === "accepted") {
-                        if (GA_IDS.length > 0) grantGoogleAnalytics(); fireConsentEvent(true); showCookieButton();
+                        if (GA_IDS.length > 0) loadAndGrantGA(); fireConsentEvent(true); showCookieButton();
                     } else if (consent === "declined") {
-                        if (GA_IDS.length > 0) revokeGoogleAnalytics(); fireConsentEvent(false); showCookieButton();
+                        fireConsentEvent(false); showCookieButton();
                     } else {
                         createBanner();
                     }
@@ -1884,23 +1880,22 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("    }");
 
                     if (s.gaEnabled && gaIdArrayStr) {
-                        L.push("    /* --- Google Analytics mit Consent Mode v2 --- */");
-                        L.push("    window.dataLayer = window.dataLayer || [];");
-                        L.push("    function gtag(){window.dataLayer.push(arguments);} window.gtag = gtag;");
-                        L.push('    gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied"});');
-                        L.push("    (function(){");
+                        L.push("    /* --- Google Analytics (erst nach Consent) --- */");
+                        L.push("    var gaLoaded = false;");
+                        L.push("    function loadAndGrantGA() {");
+                        L.push("        if (gaLoaded) return;");
+                        L.push("        gaLoaded = true;");
+                        L.push("        window.dataLayer = window.dataLayer || [];");
+                        L.push("        function gtag(){window.dataLayer.push(arguments);} window.gtag = gtag;");
+                        L.push('        gtag("consent","default",{analytics_storage:"granted",ad_storage:"denied"});');
                         L.push('        var sc = document.createElement("script"); sc.async = true;');
                         L.push('        sc.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_IDS[0];');
                         L.push("        document.head.appendChild(sc);");
-                        L.push("    })();");
-                        L.push('    gtag("js", new Date());');
-                        L.push("    for (var gi=0;gi<GA_IDS.length;gi++) gtag('config',GA_IDS[gi]);");
-                        L.push("");
-                        L.push("    function grantGoogleAnalytics() {");
-                        L.push('        gtag("consent","update",{analytics_storage:"granted"});');
+                        L.push('        gtag("js", new Date());');
+                        L.push("        for (var gi=0;gi<GA_IDS.length;gi++) gtag('config',GA_IDS[gi]);");
                         L.push("    }");
                         L.push("    function revokeGoogleAnalytics() {");
-                        L.push('        gtag("consent","update",{analytics_storage:"denied"});');
+                        L.push('        if (window.gtag) window.gtag("consent","update",{analytics_storage:"denied"});');
                         L.push("    }");
                     }
 
@@ -1945,7 +1940,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("    function handleConsent(accepted) {");
                     L.push('        setCookie(COOKIE_NAME, accepted ? "accepted" : "declined", COOKIE_DAYS);');
                     if (s.gaEnabled && gaIdArrayStr) {
-                        L.push("        if (accepted) grantGoogleAnalytics(); else revokeGoogleAnalytics();");
+                        L.push("        if (accepted) loadAndGrantGA(); else revokeGoogleAnalytics();");
                     }
                     L.push("        fireConsentEvent(accepted);");
                     L.push("    }");
@@ -1954,10 +1949,10 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("        if (!document.body) { document.addEventListener('DOMContentLoaded',init); return; }");
                     L.push("        injectStyles(); var consent = getCookie(COOKIE_NAME);");
                     L.push('        if (consent==="accepted") {');
-                    if (s.gaEnabled && gaIdArrayStr) L.push("            grantGoogleAnalytics();");
+                    if (s.gaEnabled && gaIdArrayStr) L.push("            loadAndGrantGA();");
                     L.push("            fireConsentEvent(true); showCookieButton();");
                     L.push('        } else if (consent==="declined") {');
-                    if (s.gaEnabled && gaIdArrayStr) L.push("            revokeGoogleAnalytics();");
+
                     L.push("            fireConsentEvent(false); showCookieButton();");
                     L.push("        } else { createBanner(); }");
                     L.push("    }");
