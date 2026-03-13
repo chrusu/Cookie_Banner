@@ -117,6 +117,71 @@
                 margin-top: 12px;
                 transition: background 0.2s, transform 0.15s;
             }
+            /* --- Cookie Icon Showcase --- */
+            .icon-showcase {
+                display: flex;
+                gap: 32px;
+                margin: 20px 0;
+                flex-wrap: wrap;
+            }
+            .icon-card {
+                background: #fff;
+                border: 2px solid rgba(189, 0, 255, 0.15);
+                border-radius: 12px;
+                padding: 24px 28px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                flex: 1 1 0;
+                min-width: 160px;
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+            .icon-card.active {
+                border-color: var(--akzentfarbe);
+                box-shadow: 0 0 0 3px rgba(189, 0, 255, 0.15);
+            }
+            .icon-card svg {
+                width: 64px;
+                height: 64px;
+                filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+            }
+            .icon-card-label {
+                font-family: var(--font-main);
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-dark);
+                text-align: center;
+            }
+            .icon-card-desc {
+                font-family: var(--font-main);
+                font-size: 12px;
+                color: #777;
+                text-align: center;
+                line-height: 1.5;
+            }
+            .icon-card-badge {
+                font-family: var(--font-main);
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                padding: 3px 10px;
+                border-radius: 20px;
+                background: #eee;
+                color: #999;
+            }
+            .icon-card.active .icon-card-badge {
+                background: var(--akzentfarbe);
+                color: #fff;
+            }
+            @media (max-width: 540px) {
+                .icon-showcase {
+                    flex-direction: column;
+                    gap: 16px;
+                }
+            }
+
             button.test-btn:hover {
                 background: var(--akzent-hover);
                 transform: scale(1.03);
@@ -911,6 +976,60 @@
         </div>
 
         <!-- ================================================================
+             Cookie-Logo Status-Icons
+             ================================================================ -->
+        <div class="doc-section">
+            <h2>Cookie-Logo Status-Icons</h2>
+            <p>
+                Der Cookie-Button unten rechts zeigt je nach Consent-Status ein
+                anderes Icon. Der aktuell aktive Status wird hervorgehoben.
+            </p>
+            <div class="icon-showcase" id="icon-showcase">
+                <div class="icon-card" id="icon-card-pending">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="32" cy="32" r="29" fill="rgb(189,0,255)" stroke="#8a00b3" stroke-width="2"/>
+                        <circle cx="20" cy="22" r="4" fill="#1C0F21"/><circle cx="38" cy="18" r="3" fill="#1C0F21"/>
+                        <circle cx="28" cy="38" r="4.5" fill="#1C0F21"/><circle cx="44" cy="34" r="3.5" fill="#1C0F21"/>
+                        <circle cx="16" cy="40" r="2.5" fill="#1C0F21"/><circle cx="40" cy="48" r="2.5" fill="#1C0F21"/>
+                        <circle cx="24" cy="28" r="1.5" fill="#8a00b3"/><circle cx="46" cy="22" r="1.5" fill="#8a00b3"/>
+                        <circle cx="34" cy="46" r="1.5" fill="#8a00b3"/>
+                        <text x="32" y="40" text-anchor="middle" font-size="28" font-weight="bold" font-family="sans-serif" fill="#fff">?</text>
+                    </svg>
+                    <span class="icon-card-label">Pending</span>
+                    <span class="icon-card-desc">Noch keine Entscheidung getroffen &ndash; Banner wird angezeigt</span>
+                    <span class="icon-card-badge">Inaktiv</span>
+                </div>
+                <div class="icon-card" id="icon-card-accepted">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="32" cy="32" r="29" fill="rgb(189,0,255)" stroke="#8a00b3" stroke-width="2"/>
+                        <circle cx="20" cy="22" r="4" fill="#1C0F21"/><circle cx="38" cy="18" r="3" fill="#1C0F21"/>
+                        <circle cx="28" cy="38" r="4.5" fill="#1C0F21"/><circle cx="44" cy="34" r="3.5" fill="#1C0F21"/>
+                        <circle cx="16" cy="40" r="2.5" fill="#1C0F21"/><circle cx="40" cy="48" r="2.5" fill="#1C0F21"/>
+                        <circle cx="24" cy="28" r="1.5" fill="#8a00b3"/><circle cx="46" cy="22" r="1.5" fill="#8a00b3"/>
+                        <circle cx="34" cy="46" r="1.5" fill="#8a00b3"/>
+                    </svg>
+                    <span class="icon-card-label">Akzeptiert</span>
+                    <span class="icon-card-desc">Alle Cookies akzeptiert &ndash; Tracking aktiv</span>
+                    <span class="icon-card-badge">Inaktiv</span>
+                </div>
+                <div class="icon-card" id="icon-card-declined">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="32" cy="32" r="29" fill="rgb(189,0,255)" stroke="#8a00b3" stroke-width="2"/>
+                        <circle cx="20" cy="22" r="4" fill="#1C0F21"/><circle cx="38" cy="18" r="3" fill="#1C0F21"/>
+                        <circle cx="28" cy="38" r="4.5" fill="#1C0F21"/><circle cx="44" cy="34" r="3.5" fill="#1C0F21"/>
+                        <circle cx="16" cy="40" r="2.5" fill="#1C0F21"/><circle cx="40" cy="48" r="2.5" fill="#1C0F21"/>
+                        <circle cx="24" cy="28" r="1.5" fill="#8a00b3"/><circle cx="46" cy="22" r="1.5" fill="#8a00b3"/>
+                        <circle cx="34" cy="46" r="1.5" fill="#8a00b3"/>
+                        <line x1="10" y1="10" x2="54" y2="54" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                    <span class="icon-card-label">Abgelehnt</span>
+                    <span class="icon-card-desc">Nur notwendige Cookies &ndash; kein Tracking</span>
+                    <span class="icon-card-badge">Inaktiv</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================
              Dokumentation: localStorage
              ================================================================ -->
         <div class="doc-section">
@@ -1271,6 +1390,8 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     stylesInjected = true;
                     var style = document.createElement("style");
                     style.textContent =
+                        "body.cb-banner-open{padding-bottom:60px!important;transition:padding-bottom .35s ease}" +
+                        "body.cb-banner-open #cb-cookie-btn{bottom:78px}" +
                         "#cb-banner{position:fixed;bottom:0;left:0;right:0;z-index:999999;" +
                         "background:" + COLOR_BG + ";border-top:3px solid " + COLOR_SECONDARY + ";" +
                         "padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;" +
@@ -1296,7 +1417,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                         "width:44px;height:44px;border-radius:50%;background:" + COLOR_BG + ";border:2px solid " + COLOR_SECONDARY + ";" +
                         "cursor:pointer;display:flex;align-items:center;justify-content:center;" +
                         "box-shadow:0 2px 12px rgba(0,0,0,.35);" +
-                        "opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease,background .2s;padding:0}" +
+                        "opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease,background .2s,bottom .35s ease;padding:0}" +
                         "#cb-cookie-btn.cb-visible{opacity:1;transform:scale(1)}" +
                         "#cb-cookie-btn:hover{background:" + COLOR_SECONDARY + "}" +
                         "#cb-cookie-btn svg{width:22px;height:22px}";
@@ -1315,7 +1436,11 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                         '<div id="cb-btns"><button id="cb-accept">' + BTN_ACCEPT_TEXT + '</button>' +
                         '<button id="cb-decline">' + BTN_DECLINE_TEXT + '</button></div>';
                     document.body.appendChild(banner);
-                    requestAnimationFrame(function () { banner.classList.add("cb-visible"); });
+                    showCookieButton("pending");
+                    requestAnimationFrame(function () {
+                        banner.classList.add("cb-visible");
+                        document.body.classList.add("cb-banner-open");
+                    });
                     document.getElementById("cb-accept").addEventListener("click", function () {
                         handleConsent(true); closeBanner(banner);
                     });
@@ -1326,6 +1451,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
 
                 function closeBanner(banner) {
                     banner.classList.remove("cb-visible");
+                    document.body.classList.remove("cb-banner-open");
                     setTimeout(function () { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
                     showCookieButton(getCookie(COOKIE_NAME));
                 }
@@ -1495,6 +1621,24 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                 document.cookie = "cookie_consent=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;";
                 logEvent("Consent-Cookie gel\u00f6scht..."); setTimeout(function () { location.reload(); }, 500);
             }
+            /* --- Icon Showcase: aktiven Status hervorheben --- */
+            function updateIconShowcase() {
+                var cards = document.querySelectorAll(".icon-card");
+                for (var i = 0; i < cards.length; i++) {
+                    cards[i].classList.remove("active");
+                    cards[i].querySelector(".icon-card-badge").textContent = "Inaktiv";
+                }
+                var consent = document.cookie.match(/(^| )cookie_consent=([^;]+)/);
+                var state = consent ? decodeURIComponent(consent[2]) : "pending";
+                var activeCard = document.getElementById("icon-card-" + state);
+                if (activeCard) {
+                    activeCard.classList.add("active");
+                    activeCard.querySelector(".icon-card-badge").textContent = "Aktiv";
+                }
+            }
+            document.addEventListener("cookieConsentChanged", updateIconShowcase);
+            updateIconShowcase();
+
             updateStatusDisplay();
             logEvent("Testseite geladen");
         </script>
@@ -1747,6 +1891,8 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     var style = document.createElement("style");
                     style.id = "cb-live-style";
                     style.textContent =
+                        "body.cb-banner-open{padding-bottom:60px!important;transition:padding-bottom .35s ease}" +
+                        "body.cb-banner-open #cb-cookie-btn{bottom:78px}" +
                         "#cb-banner{position:fixed;bottom:0;left:0;right:0;z-index:999999;" +
                         "background:" + bg + ";border-top:3px solid " + borderColor + ";" +
                         "padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;" +
@@ -1773,7 +1919,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                         "width:44px;height:44px;border-radius:50%;background:" + bg + ";border:2px solid " + borderColor + ";" +
                         "cursor:pointer;display:flex;align-items:center;justify-content:center;" +
                         "box-shadow:0 2px 12px rgba(0,0,0,.35);" +
-                        "opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease,background .2s;padding:0}" +
+                        "opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease,background .2s,bottom .35s ease;padding:0}" +
                         "#cb-cookie-btn.cb-visible{opacity:1;transform:scale(1)}" +
                         "#cb-cookie-btn:hover{background:" + borderColor + "}" +
                         "#cb-cookie-btn svg{width:22px;height:22px}";
@@ -1796,15 +1942,37 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                         '<button id="cb-decline">' + btnDeclineText + '</button></div>';
 
                     if (!banner) {
-                        // Hide cookie button
-                        if (cookieBtn) cookieBtn.classList.remove("cb-visible");
                         banner = document.createElement("div");
                         banner.id = "cb-banner";
                         banner.setAttribute("role", "dialog");
                         banner.setAttribute("aria-label", "Cookie-Hinweis");
                         banner.innerHTML = bannerHTML;
                         document.body.appendChild(banner);
-                        requestAnimationFrame(function () { banner.classList.add("cb-visible"); });
+
+                        // Show pending cookie button above the banner
+                        var existingCBtn = document.getElementById("cb-cookie-btn");
+                        if (existingCBtn && existingCBtn.parentNode) existingCBtn.parentNode.removeChild(existingCBtn);
+                        var pendingBtn = document.createElement("button");
+                        pendingBtn.id = "cb-cookie-btn";
+                        pendingBtn.setAttribute("aria-label", "Cookie-Einstellungen");
+                        pendingBtn.setAttribute("title", "Cookie-Einstellungen");
+                        var pendingSvg = '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                            '<circle cx="32" cy="32" r="29" fill="' + pBg + '" stroke="' + borderColor + '" stroke-width="2"/>' +
+                            '<circle cx="20" cy="22" r="4" fill="' + bg + '"/><circle cx="38" cy="18" r="3" fill="' + bg + '"/>' +
+                            '<circle cx="28" cy="38" r="4.5" fill="' + bg + '"/><circle cx="44" cy="34" r="3.5" fill="' + bg + '"/>' +
+                            '<text x="32" y="40" text-anchor="middle" font-size="28" font-weight="bold" font-family="sans-serif" fill="' + pColor + '">?</text></svg>';
+                        pendingBtn.innerHTML = pendingSvg;
+                        document.body.appendChild(pendingBtn);
+                        requestAnimationFrame(function () { pendingBtn.classList.add("cb-visible"); });
+                        pendingBtn.addEventListener("click", function () {
+                            pendingBtn.classList.remove("cb-visible");
+                            applyLivePreview();
+                        });
+
+                        requestAnimationFrame(function () {
+                            banner.classList.add("cb-visible");
+                            document.body.classList.add("cb-banner-open");
+                        });
                     } else {
                         banner.innerHTML = bannerHTML;
                     }
@@ -1823,6 +1991,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     }
                     function closeLiveBanner() {
                         banner.classList.remove("cb-visible");
+                        document.body.classList.remove("cb-banner-open");
                         setTimeout(function () { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 400);
                         // Show cookie button
                         var existing = document.getElementById("cb-cookie-btn");
@@ -1941,6 +2110,8 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push("    function injectStyles() {");
                     L.push("        if (stylesInjected) return; stylesInjected = true;");
                     L.push('        var st = document.createElement("style"); st.textContent =');
+                    L.push('            "body.cb-banner-open{padding-bottom:60px!important;transition:padding-bottom .35s ease}" +');
+                    L.push('            "body.cb-banner-open #cb-cookie-btn{bottom:78px}" +');
                     L.push('            "#cb-banner{position:fixed;bottom:0;left:0;right:0;z-index:999999;background:"+COLOR_BG+";border-top:3px solid "+COLOR_BORDER+";padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:\'Lexend Exa\',sans-serif;font-size:14px;line-height:1.45;color:"+COLOR_TEXT+";box-shadow:0 -2px 16px rgba(0,0,0,.3);transform:translateY(100%);transition:transform .35s ease}" +');
                     L.push('            "#cb-banner.cb-visible{transform:translateY(0)}" +');
                     L.push('            "#cb-text{flex:1 1 auto;min-width:0}#cb-text a{color:"+COLOR_LINK+";text-decoration:underline;text-underline-offset:2px}#cb-text a:hover{opacity:.8}" +');
@@ -1950,7 +2121,7 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push('            "#cb-decline{background:"+BTN_S_BG+";color:"+BTN_S_COLOR+";border:1.5px solid "+BTN_S_BORDER+";padding:8px 22px;border-radius:"+BTN_S_RADIUS+"px;font-family:\'Lexend Exa\',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,transform .15s;white-space:nowrap}" +');
                     L.push('            "#cb-decline:hover{opacity:.85;transform:scale(1.03)}" +');
                     L.push('            "@media(max-width:640px){#cb-banner{flex-direction:column;align-items:stretch;padding:14px 16px;gap:12px}#cb-btns{justify-content:stretch}#cb-accept,#cb-decline{flex:1;text-align:center;padding:10px 14px}}" +');
-                    L.push('            "#cb-cookie-btn{position:fixed;bottom:18px;right:18px;z-index:999998;width:44px;height:44px;border-radius:50%;background:"+COLOR_BG+";border:2px solid "+COLOR_BORDER+";cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.35);opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease,background .2s;padding:0}" +');
+                    L.push('            "#cb-cookie-btn{position:fixed;bottom:18px;right:18px;z-index:999998;width:44px;height:44px;border-radius:50%;background:"+COLOR_BG+";border:2px solid "+COLOR_BORDER+";cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.35);opacity:0;transform:scale(0);transition:opacity .3s ease,transform .3s ease,background .2s,bottom .35s ease;padding:0}" +');
                     L.push('            "#cb-cookie-btn.cb-visible{opacity:1;transform:scale(1)}#cb-cookie-btn:hover{background:"+COLOR_BORDER+"}#cb-cookie-btn svg{width:22px;height:22px}";');
                     L.push("        document.head.appendChild(st);");
                     L.push("    }");
@@ -1961,11 +2132,12 @@ document.<span class="fn">addEventListener</span>(<span class="str">'cookieConse
                     L.push('        b.setAttribute("role","dialog"); b.setAttribute("aria-label","Cookie-Hinweis");');
                     L.push('        b.innerHTML = \'<div id="cb-text">\'+BANNER_TEXT+\'<a href="\'+LINK_URL+\'" target="_blank" rel="noopener">\'+LINK_TEXT+\'</a></div><div id="cb-btns"><button id="cb-accept">\'+BTN_ACCEPT_TEXT+\'</button><button id="cb-decline">\'+BTN_DECLINE_TEXT+\'</button></div>\';');
                     L.push("        document.body.appendChild(b);");
-                    L.push('        requestAnimationFrame(function(){b.classList.add("cb-visible")});');
+                    L.push('        showCookieButton("pending");');
+                    L.push('        requestAnimationFrame(function(){b.classList.add("cb-visible");document.body.classList.add("cb-banner-open")});');
                     L.push('        document.getElementById("cb-accept").addEventListener("click",function(){handleConsent(true);closeBanner(b)});');
                     L.push('        document.getElementById("cb-decline").addEventListener("click",function(){handleConsent(false);closeBanner(b)});');
                     L.push("    }");
-                    L.push('    function closeBanner(b){b.classList.remove("cb-visible");setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},400);showCookieButton(getCookie(COOKIE_NAME))}');
+                    L.push('    function closeBanner(b){b.classList.remove("cb-visible");document.body.classList.remove("cb-banner-open");setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},400);showCookieButton(getCookie(COOKIE_NAME))}');
 
                     L.push("    var COOKIE_SVG_ACCEPTED='<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"'+BTN_P_BG+'\" stroke=\"'+COLOR_BORDER+'\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"22\" r=\"4\" fill=\"'+COLOR_BG+'\"/><circle cx=\"38\" cy=\"18\" r=\"3\" fill=\"'+COLOR_BG+'\"/><circle cx=\"28\" cy=\"38\" r=\"4.5\" fill=\"'+COLOR_BG+'\"/><circle cx=\"44\" cy=\"34\" r=\"3.5\" fill=\"'+COLOR_BG+'\"/></svg>';");
                     L.push("    var COOKIE_SVG_PENDING='<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"'+BTN_P_BG+'\" stroke=\"'+COLOR_BORDER+'\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"22\" r=\"4\" fill=\"'+COLOR_BG+'\"/><circle cx=\"38\" cy=\"18\" r=\"3\" fill=\"'+COLOR_BG+'\"/><circle cx=\"28\" cy=\"38\" r=\"4.5\" fill=\"'+COLOR_BG+'\"/><circle cx=\"44\" cy=\"34\" r=\"3.5\" fill=\"'+COLOR_BG+'\"/><text x=\"32\" y=\"40\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"bold\" font-family=\"sans-serif\" fill=\"'+BTN_P_COLOR+'\">?</text></svg>';");
